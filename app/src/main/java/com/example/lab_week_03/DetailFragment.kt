@@ -9,7 +9,6 @@ import android.widget.TextView
 
 class DetailFragment : Fragment() {
 
-    // Properti untuk mengakses TextView dengan aman (safe call)
     private val coffeeTitle: TextView?
         get() = view?.findViewById(R.id.coffee_title)
     private val coffeeDesc: TextView?
@@ -19,12 +18,17 @@ class DetailFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_detail, container, false)
     }
 
-    // Fungsi ini akan dipanggil oleh MainActivity
-    fun setCoffeeData(id: Int) {
+    // Tambahkan fungsi ini
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        val coffeeId = arguments?.getInt(COFFEE_ID, 0) ?: 0
+        setCoffeeData(coffeeId)
+    }
+
+    private fun setCoffeeData(id: Int) {
         when (id) {
             R.id.affogato -> {
                 coffeeTitle?.text = getString(R.string.affogato_title)
@@ -39,5 +43,16 @@ class DetailFragment : Fragment() {
                 coffeeDesc?.text = getString(R.string.latte_desc)
             }
         }
+    }
+
+    companion object {
+        private const val COFFEE_ID = "COFFEE_ID"
+
+        fun newInstance(coffeeId: Int) =
+            DetailFragment().apply {
+                arguments = Bundle().apply {
+                    putInt(COFFEE_ID, coffeeId)
+                }
+            }
     }
 }
