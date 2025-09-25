@@ -1,25 +1,13 @@
 package com.example.lab_week_03
 
-import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.navigation.findNavController
 
-class ListFragment : Fragment(), View.OnClickListener {
-
-    private lateinit var coffeeListener: CoffeeListener
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        // Memastikan activity induk mengimplementasikan interface
-        if (context is CoffeeListener) {
-            coffeeListener = context
-        } else {
-            throw RuntimeException("$context must implement CoffeeListener")
-        }
-    }
+class ListFragment : Fragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -37,15 +25,17 @@ class ListFragment : Fragment(), View.OnClickListener {
             view.findViewById(R.id.latte)
         )
 
-        coffeeList.forEach {
-            it.setOnClickListener(this)
+        coffeeList.forEach { coffee ->
+            coffee.setOnClickListener {
+                val fragmentBundle = Bundle()
+                fragmentBundle.putInt(COFFEE_ID, coffee.id)
+                // Panggil action yang sudah kita definisikan di nav_graph.xml
+                view.findNavController().navigate(R.id.coffee_id_action, fragmentBundle)
+            }
         }
     }
 
-    override fun onClick(v: View?) {
-        v?.let {
-            // Mengirim ID view yang di-klik ke activity melalui interface
-            coffeeListener.onSelected(it.id)
-        }
+    companion object {
+        const val COFFEE_ID = "COFFEE_ID"
     }
 }
